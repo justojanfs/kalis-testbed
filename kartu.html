@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout kartu · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Checkout</h1>
+    <p>Form kartu dengan atribut <code>autocomplete="cc-*"</code>, kedaluwarsa berupa dropdown, dan kolom PIN.</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <h3>Ringkasan pesanan</h3>
+        <div class="ringkasan-pesanan"><span>Langganan Uji (1 bulan)</span><span>Rp 49.000</span></div>
+        <div class="ringkasan-pesanan"><strong>Total</strong><strong>Rp 49.000</strong></div>
+      </div>
+      <div class="kotak">
+        <form id="form" class="form-uji" novalidate>
+          <label class="kol" for="email-struk">Email untuk struk</label>
+          <input id="email-struk" name="email" type="email" autocomplete="email" data-testid="email-struk" data-cek="Email struk" data-harapan="manual">
+          <label class="kol" for="cc-nama">Nama pada kartu</label>
+          <input id="cc-nama" name="cc_nama" type="text" autocomplete="cc-name" data-testid="cc-nama" data-cek="Nama pada kartu">
+          <label class="kol" for="cc-nomor">Nomor kartu</label>
+          <input id="cc-nomor" name="cc_nomor" type="text" inputmode="numeric" autocomplete="cc-number" data-testid="cc-nomor" data-cek="Nomor kartu" data-jenis="kartu">
+          <div class="baris">
+            <div>
+              <label class="kol" for="cc-bulan">Bulan</label>
+              <select id="cc-bulan" name="cc_bulan" autocomplete="cc-exp-month" data-testid="cc-bulan" data-cek="Bulan kedaluwarsa">
+            <option value="">BB</option>
+            <option value="01">01</option>
+            <option value="02">02</option>
+            <option value="03">03</option>
+            <option value="04">04</option>
+            <option value="05">05</option>
+            <option value="06">06</option>
+            <option value="07">07</option>
+            <option value="08">08</option>
+            <option value="09">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+              </select>
+            </div>
+            <div>
+              <label class="kol" for="cc-tahun">Tahun</label>
+              <select id="cc-tahun" name="cc_tahun" autocomplete="cc-exp-year" data-testid="cc-tahun" data-cek="Tahun kedaluwarsa">
+            <option value="">TTTT</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+            <option value="2031">2031</option>
+            <option value="2032">2032</option>
+            <option value="2033">2033</option>
+            <option value="2034">2034</option>
+            <option value="2035">2035</option>
+            <option value="2036">2036</option>
+              </select>
+            </div>
+            <div>
+              <label class="kol" for="cc-cvv">CVV</label>
+              <input id="cc-cvv" name="cc_cvv" type="text" inputmode="numeric" maxlength="4" autocomplete="cc-csc" data-testid="cc-cvv" data-cek="CVV">
+            </div>
+          </div>
+          <label class="kol" for="pin">PIN kartu (6 digit)</label>
+          <input id="pin" name="pin_kartu" type="password" inputmode="numeric" maxlength="6" autocomplete="off" data-testid="pin" data-cek="PIN kartu" data-jenis="password" data-harapan="bukan-kalis">
+          <p class="galat" id="galat" role="alert"></p>
+          <button type="submit" data-testid="bayar">Bayar Rp 49.000</button>
+        </form>
+        <p class="ringkas-data">Kartu Uji: <code>4111 1111 1111 1111</code> · UJI KALIS · 12/2030 · CVV <code>123</code> · PIN <code>654321</code></p>
+        <div class="status-wadah" data-status></div>
+      </div>
+    </div>
+    <div data-panel="kartu"></div>
+  </div>
+</main>
+<script>
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const wajib = ["cc-nama", "cc-nomor", "cc-bulan", "cc-tahun", "cc-cvv", "pin"];
+    const kosong = wajib.filter((id) => !document.getElementById(id).value);
+    if (kosong.length) return (document.getElementById("galat").textContent = "Lengkapi data kartu dan PIN.");
+    Uji.berhasil("bayar", document.getElementById("email-struk").value);
+  });
+</script>
+</body>
+</html>

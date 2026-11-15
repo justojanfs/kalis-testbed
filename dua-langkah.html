@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Masuk dua langkah · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Masuk dua langkah</h1>
+    <p>Langkah 1 meminta email, langkah 2 meminta password (pola Google/Microsoft). Username di langkah 2 disimpan di kolom tersembunyi.</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <form id="langkah1" class="form-uji" novalidate>
+          <p class="info" style="margin-top:0">Langkah 1 dari 2</p>
+          <label class="kol" for="email">Email</label>
+          <input id="email" name="identifier" type="email" autocomplete="username" data-testid="email" data-cek="Email (langkah 1)">
+          <p class="galat" id="galat1" role="alert"></p>
+          <button type="submit" data-testid="lanjut">Lanjut</button>
+        </form>
+        <form id="langkah2" class="form-uji" novalidate style="display:none">
+          <p class="info" style="margin-top:0">Langkah 2 dari 2 · <strong id="email-tampil"></strong> · <a href="#" id="ulang">Mulai ulang</a></p>
+          <input type="text" name="username" autocomplete="username" id="username-tersembunyi" style="display:none" data-cek="Username tersembunyi (langkah 2)" data-harapan="manual">
+          <label class="kol" for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" data-testid="password" data-cek="Password (langkah 2)" data-jenis="password">
+          <p class="galat" id="galat2" role="alert"></p>
+          <button type="submit" data-testid="masuk">Masuk</button>
+        </form>
+        <p class="ringkas-data">Akun A: <code>uji@kalis.test</code> / <code>Uji-Kalis-2026!</code><br>Akun C: <code>dua@kalis.test</code> / <code>Dua-Langkah-2026!</code></p>
+        <div class="status-wadah" data-status></div>
+      </div>
+    </div>
+    <div data-panel="dua-langkah"></div>
+  </div>
+</main>
+<script>
+  const f1 = document.getElementById("langkah1");
+  const f2 = document.getElementById("langkah2");
+  const email = document.getElementById("email");
+  const tersembunyi = document.getElementById("username-tersembunyi");
+  function keLangkah1() {
+    f2.style.display = "none";
+    f1.style.display = "";
+    document.getElementById("password").value = "";
+    document.getElementById("galat2").textContent = "";
+    email.focus();
+  }
+  f1.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = email.value.trim();
+    if (!Uji.server.ada(v)) {
+      document.getElementById("galat1").textContent = "Akun tidak ditemukan.";
+      return;
+    }
+    document.getElementById("galat1").textContent = "";
+    tersembunyi.value = v;
+    document.getElementById("email-tampil").textContent = v;
+    f1.style.display = "none";
+    f2.style.display = "";
+    document.getElementById("password").focus();
+  });
+  f2.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const pw = document.getElementById("password").value;
+    if (Uji.server.masuk(tersembunyi.value, pw)) Uji.berhasil("login", tersembunyi.value);
+    else document.getElementById("galat2").textContent = "Password salah.";
+  });
+  document.getElementById("ulang").addEventListener("click", (e) => {
+    e.preventDefault();
+    keLangkah1();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Berhasil · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="kotak sukses">
+    <div class="centang" aria-hidden="true">✓</div>
+    <h1 id="judul">Berhasil</h1>
+    <p id="pesan" class="info"></p>
+    <p class="info">Bila skenario ini mengharapkan tawaran simpan dari Kalis, jendelanya muncul beberapa detik setelah halaman ini terbuka.</p>
+    <p><a id="kembali" href="index.html">Kembali ke halaman uji</a> · <a href="index.html">Beranda</a></p>
+  </div>
+</main>
+<script>
+  const q = new URLSearchParams(location.search);
+  const judul = { login: "Masuk berhasil", daftar: "Pendaftaran berhasil", ganti: "Password berhasil diganti", bayar: "Pembayaran berhasil" };
+  const dari = q.get("dari") || "";
+  document.getElementById("judul").textContent = judul[dari] || "Berhasil";
+  document.title = (judul[dari] || "Berhasil") + " · Kalis Testbed";
+  const email = q.get("email");
+  if (email) document.getElementById("pesan").textContent = "Akun: " + email;
+  const kembali = q.get("kembali");
+  if (kembali && /^[a-z0-9-]+\.html$/.test(kembali)) document.getElementById("kembali").href = kembali;
+</script>
+</body>
+</html>

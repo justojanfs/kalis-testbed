@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jebakan luar layar · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Masuk (jebakan di luar layar)</h1>
+    <p>Kolom jebakan berukuran normal tetapi digeser ke luar layar, dipotong clip-path, atau dipotong oleh wadahnya, pola honeypot yang umum. Pengguna tidak melihatnya.</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <form id="form" class="form-uji" novalidate>
+          <div id="jb1" style="position:absolute;left:-9999px;top:0" aria-hidden="true">
+            <input name="email" type="email" autocomplete="username" tabindex="-1" data-cek="Luar layar + aria-hidden (email)" data-harapan="kosong" data-jebakan>
+            <input name="password" type="password" tabindex="-1" data-cek="Luar layar + aria-hidden (password)" data-harapan="kosong" data-jebakan data-jenis="password">
+          </div>
+          <div id="jb2" style="position:absolute;left:-9999px;top:0">
+            <input name="username" type="text" autocomplete="username" tabindex="-1" data-cek="Luar layar (username)" data-harapan="kosong" data-jebakan>
+            <input name="pass" type="password" tabindex="-1" data-cek="Luar layar (password)" data-harapan="kosong" data-jebakan data-jenis="password">
+          </div>
+          <div id="jb4" style="position:absolute;clip-path:inset(50%)">
+            <input name="akun" type="email" tabindex="-1" data-cek="clip-path tanpa ubah ukuran (email)" data-harapan="kosong" data-jebakan>
+            <input name="sandi" type="password" tabindex="-1" data-cek="clip-path tanpa ubah ukuran (password)" data-harapan="kosong" data-jebakan data-jenis="password">
+          </div>
+          <div id="jb3" style="height:0;overflow:hidden">
+            <input name="login" type="email" tabindex="-1" data-cek="Wadah tinggi 0 (email)" data-harapan="kosong" data-jebakan>
+            <input name="pwd" type="password" tabindex="-1" data-cek="Wadah tinggi 0 (password)" data-harapan="kosong" data-jebakan data-jenis="password">
+          </div>
+          <label class="kol" for="email">Email</label>
+          <input id="email" name="user_email" type="email" autocomplete="username" data-testid="email" data-cek="Email (asli)">
+          <label class="kol" for="password">Password</label>
+          <input id="password" name="user_password" type="password" autocomplete="current-password" data-testid="password" data-cek="Password (asli)" data-jenis="password">
+          <p class="galat" id="galat" role="alert"></p>
+          <button type="submit" data-testid="masuk">Masuk</button>
+        </form>
+        <p class="ringkas-data">Akun A: <code>uji@kalis.test</code> / <code>Uji-Kalis-2026!</code></p>
+        <div class="status-wadah" data-status></div>
+      </div>
+      <div class="kotak">
+        <h3>Aktifkan jebakan</h3>
+        <p class="info" style="margin-top:0">Kalis memakai kolom password terlihat yang PERTAMA. Bila satu jebakan lolos, jebakan berikutnya tidak teruji. Matikan satu per satu untuk melihat semuanya.</p>
+        <label><input type="checkbox" data-sakelar="jb1" checked> Luar layar + aria-hidden</label><br>
+        <label><input type="checkbox" data-sakelar="jb2" checked> Luar layar tanpa aria-hidden</label><br>
+        <label><input type="checkbox" data-sakelar="jb4" checked> Dipotong clip-path (ukuran tetap)</label><br>
+        <label><input type="checkbox" data-sakelar="jb3" checked> Wadah tinggi 0 + overflow hidden</label>
+      </div>
+    </div>
+    <div data-panel="jebakan-luar-layar"></div>
+  </div>
+</main>
+<script>
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const pw = document.getElementById("password").value;
+    if (Uji.server.masuk(email, pw)) Uji.berhasil("login", email);
+    else document.getElementById("galat").textContent = "Email atau password salah.";
+  });
+  for (const s of document.querySelectorAll("[data-sakelar]")) {
+    s.addEventListener("change", () => {
+      const w = document.getElementById(s.dataset.sakelar);
+      w.hidden = !s.checked;
+      if (!s.checked) for (const i of w.querySelectorAll("input")) i.value = "";
+    });
+  }
+</script>
+</body>
+</html>

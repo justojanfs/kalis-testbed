@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout kartu (polos) · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Checkout (tanpa atribut)</h1>
+    <p>Kolom kartu tanpa autocomplete; dikenali dari nama dan placeholder berbahasa Indonesia. Masa berlaku dalam satu kolom BB/TT.</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <h3>Ringkasan pesanan</h3>
+        <div class="ringkasan-pesanan"><span>Langganan Uji (1 bulan)</span><span>Rp 49.000</span></div>
+        <div class="ringkasan-pesanan"><strong>Total</strong><strong>Rp 49.000</strong></div>
+      </div>
+      <div class="kotak">
+        <form id="form" class="form-uji" novalidate>
+          <label class="kol" for="nomor">Nomor kartu</label>
+          <input id="nomor" name="nomor_kartu" type="text" inputmode="numeric" placeholder="Nomor kartu" data-testid="nomor" data-cek="Nomor kartu" data-jenis="kartu">
+          <label class="kol" for="nama">Nama di kartu</label>
+          <input id="nama" name="nama_kartu" type="text" placeholder="Nama di kartu" data-testid="nama" data-cek="Nama di kartu">
+          <div class="baris">
+            <div>
+              <label class="kol" for="berlaku">Masa berlaku</label>
+              <input id="berlaku" name="kedaluwarsa" type="text" placeholder="BB/TT" maxlength="5" data-testid="berlaku" data-cek="Masa berlaku">
+            </div>
+            <div>
+              <label class="kol" for="cvv">CVV</label>
+              <input id="cvv" name="cvv" type="text" inputmode="numeric" placeholder="CVV" maxlength="4" data-testid="cvv" data-cek="CVV">
+            </div>
+          </div>
+          <p class="galat" id="galat" role="alert"></p>
+          <button type="submit" data-testid="bayar">Bayar Rp 49.000</button>
+        </form>
+        <p class="ringkas-data">Kartu Uji: <code>4111 1111 1111 1111</code> · UJI KALIS · 12/2030 · CVV <code>123</code> · PIN <code>654321</code></p>
+        <div class="status-wadah" data-status></div>
+      </div>
+    </div>
+    <div data-panel="kartu-polos"></div>
+  </div>
+</main>
+<script>
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const kosong = ["nomor", "nama", "berlaku", "cvv"].filter((id) => !document.getElementById(id).value);
+    if (kosong.length) return (document.getElementById("galat").textContent = "Lengkapi data kartu.");
+    Uji.berhasil("bayar");
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iframe situs sama · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Checkout dengan bingkai situs sama</h1>
+    <p>Halaman ini tidak punya kolom kartu. Kolom kartu ada di dalam iframe dari situs yang sama (justojanfs.github.io).</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <h3>Ringkasan pesanan</h3>
+        <div class="ringkasan-pesanan"><span>Langganan Uji (1 bulan)</span><span>Rp 49.000</span></div>
+        <div class="ringkasan-pesanan"><strong>Total</strong><strong>Rp 49.000</strong></div>
+        <iframe class="bayar" src="bayar-frame.html" title="Bingkai pembayaran" data-testid="bingkai"></iframe>
+      </div>
+    </div>
+    <div data-panel="iframe-sama"></div>
+  </div>
+</main>
+<script>
+
+</script>
+</body>
+</html>

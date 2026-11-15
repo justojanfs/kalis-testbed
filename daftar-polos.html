@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daftar (polos) · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Daftar akun baru (tanpa atribut)</h1>
+    <p>Form pendaftaran tanpa atribut <code>autocomplete</code> sama sekali, seperti banyak situs lama.</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <form id="form" class="form-uji" novalidate>
+          <label class="kol" for="nama">Nama lengkap</label>
+          <input id="nama" name="nama" type="text" data-testid="nama" data-cek="Nama lengkap" data-harapan="kosong">
+          <label class="kol" for="email">Email</label>
+          <input id="email" name="email" type="email" data-testid="email" data-cek="Email" data-harapan="kosong">
+          <label class="kol" for="pw1">Kata sandi</label>
+          <input id="pw1" name="kata_sandi" type="password" data-testid="password" data-cek="Kata sandi" data-jenis="password" data-harapan="kosong">
+          <label class="kol" for="pw2">Ulangi kata sandi</label>
+          <input id="pw2" name="ulangi_kata_sandi" type="password" data-testid="password-konfirmasi" data-cek="Ulangi kata sandi" data-jenis="password" data-harapan="kosong">
+          <p class="galat" id="galat" role="alert"></p>
+          <button type="submit" data-testid="daftar">Daftar</button>
+        </form>
+        <p class="ringkas-data">Akun baru: <code>polos@kalis.test</code> / <code>Polos-Kalis-2026!</code></p>
+        <div class="status-wadah" data-status></div>
+      </div>
+    </div>
+    <div data-panel="daftar-polos"></div>
+  </div>
+</main>
+<script>
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const pw = document.getElementById("pw1").value;
+    const pw2 = document.getElementById("pw2").value;
+    const galat = document.getElementById("galat");
+    if (!email || !pw) return (galat.textContent = "Email dan password wajib diisi.");
+    if (pw.length < 8) return (galat.textContent = "Password minimal 8 karakter.");
+    if (pw !== pw2) return (galat.textContent = "Konfirmasi password tidak sama.");
+    Uji.server.daftar(email, pw);
+    Uji.berhasil("daftar", email);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Kalis Testbed</h1>
+    <p>Situs dummy untuk menguji ekstensi dan aplikasi Kalis di Chrome dan Edge.</p>
+  </div>
+
+  <div class="peringatan"><strong>Hanya data dummy.</strong> Situs ini publik dan tidak punya server. Jangan pernah mengetik password atau kartu asli di sini. "Akun" situs dan hasil uji hanya disimpan di browser ini.</div>
+
+  <div class="dua-kolom">
+    <div class="kotak">
+      <h2>Persiapan</h2>
+      <ol>
+        <li>Kalis berjalan, vault terbuka, ekstensi sudah tersambung (pairing) di browser yang diuji.</li>
+        <li>Simpan <strong>Kartu Uji</strong> di aplikasi Kalis (data di samping). Login tidak perlu disimpan dulu; skenario Login dasar menyimpannya lewat Kalis.</li>
+        <li>Kerjakan skenario berurutan dari atas. Beberapa skenario butuh akun yang disimpan di skenario sebelumnya.</li>
+        <li>Selesai? Klik <strong>Salin laporan</strong> di bawah dan tempelkan ke Claude.</li>
+      </ol>
+      <p class="info">Alamat login di Kalis: <code id="situs"></code>. Semua halaman situs ini dianggap satu situs oleh Kalis.</p>
+    </div>
+    <div class="kotak">
+      <h2>Data uji</h2>
+      <table class="tabel-data" id="tabel-akun"><thead><tr><th>Akun</th><th>Email</th><th>Password</th></tr></thead><tbody></tbody></table>
+      <h3 style="margin-top:16px">Kartu Uji</h3>
+      <table class="tabel-data" id="tabel-kartu"><tbody></tbody></table>
+    </div>
+  </div>
+
+  <h2 style="margin-top:28px">Skenario</h2>
+  <div id="daftar-skenario"></div>
+
+  <div class="kotak" style="margin-top:28px">
+    <h2>Laporan</h2>
+    <p class="info" style="margin-top:0" id="total"></p>
+    <div class="aksi">
+      <button class="utama" id="salin" data-testid="salin-laporan">Salin laporan</button>
+      <button id="unduh" data-testid="unduh-laporan">Unduh laporan (.md)</button>
+      <button class="bahaya" id="hapus-hasil">Hapus semua hasil</button>
+      <button class="bahaya" id="reset-akun">Reset akun situs</button>
+    </div>
+    <p class="info" id="pesan-aksi" role="status"></p>
+  </div>
+</main>
+<script>
+  const T = KALIS_TESTBED;
+  document.getElementById("situs").textContent = T.SITUS_UTAMA;
+
+  const tbA = document.querySelector("#tabel-akun tbody");
+  for (const [k, a] of Object.entries(T.akun)) {
+    const tr = document.createElement("tr");
+    for (const v of [`${k} · ${a.catatan}`, a.email, a.password]) {
+      const td = document.createElement("td");
+      td.textContent = v;
+      tr.append(td);
+    }
+    tbA.append(tr);
+  }
+  const tbK = document.querySelector("#tabel-kartu tbody");
+  const k = T.kartu;
+  for (const [label, v] of [
+    ["Judul", k.judul],
+    ["Pemilik", k.pemilik],
+    ["Nomor", k.nomor],
+    ["Kedaluwarsa", `${String(k.bulan).padStart(2, "0")}/${k.tahun}`],
+    ["CVV", k.cvv],
+    ["PIN", k.pin],
+  ]) {
+    const tr = document.createElement("tr");
+    const a = document.createElement("th");
+    a.textContent = label;
+    const b = document.createElement("td");
+    b.textContent = v;
+    tr.append(a, b);
+    tbK.append(tr);
+  }
+
+  function gambar() {
+    const wadah = document.getElementById("daftar-skenario");
+    wadah.replaceChildren();
+    const kelompok = [...new Set(T.skenario.map((s) => s.kelompok))];
+    let tot = { n: 0, lulus: 0, gagal: 0, lewati: 0 };
+    let nomor = 0;
+    for (const g of kelompok) {
+      const h = document.createElement("h3");
+      h.textContent = g;
+      h.style.margin = "20px 0 10px";
+      const grid = document.createElement("div");
+      grid.className = "grid-skenario";
+      for (const s of T.skenario.filter((x) => x.kelompok === g)) {
+        nomor++;
+        const r = Uji.ringkas(s.id);
+        tot.n += r.n; tot.lulus += r.lulus; tot.gagal += r.gagal; tot.lewati += r.lewati;
+        const a = document.createElement("a");
+        a.className = "kartu-skenario";
+        a.href = s.halaman;
+        a.dataset.testid = "skenario-" + s.id;
+        const kk = document.createElement("div");
+        kk.className = "k";
+        kk.textContent = `${nomor}. ${s.halaman}`;
+        const j = document.createElement("h3");
+        j.textContent = s.judul;
+        const p = document.createElement("p");
+        p.textContent = s.tujuan;
+        const m = document.createElement("div");
+        m.className = "kemajuan";
+        const chip = (cls, t) => { const sp = document.createElement("span"); if (cls) sp.className = cls; sp.textContent = t; m.append(sp); };
+        chip("", `${r.selesai}/${r.n} langkah`);
+        if (r.lulus) chip("l", `${r.lulus} lulus`);
+        if (r.gagal) chip("g", `${r.gagal} gagal`);
+        if (r.lewati) chip("", `${r.lewati} dilewati`);
+        a.append(kk, j, p, m);
+        grid.append(a);
+      }
+      wadah.append(h, grid);
+    }
+    document.getElementById("total").textContent =
+      `${tot.lulus + tot.gagal + tot.lewati} dari ${tot.n} langkah tercatat · ${tot.lulus} lulus · ${tot.gagal} gagal · ${tot.lewati} dilewati`;
+  }
+  gambar();
+  window.addEventListener("pageshow", gambar);
+
+  const pesan = (t) => (document.getElementById("pesan-aksi").textContent = t);
+  document.getElementById("salin").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(Uji.laporan());
+      pesan("Laporan disalin. Tempelkan ke Claude.");
+    } catch {
+      pesan("Gagal menyalin otomatis. Pakai tombol Unduh.");
+    }
+  });
+  document.getElementById("unduh").addEventListener("click", () => {
+    const blob = new Blob([Uji.laporan()], { type: "text/markdown" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "laporan-uji-kalis-" + new Date().toISOString().slice(0, 10) + ".md";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+  document.getElementById("hapus-hasil").addEventListener("click", () => {
+    if (!confirm("Hapus semua hasil uji di browser ini?")) return;
+    Uji.hapusHasil();
+    gambar();
+    pesan("Semua hasil dihapus.");
+  });
+  document.getElementById("reset-akun").addEventListener("click", () => {
+    if (!confirm("Kembalikan akun situs (password yang sudah diganti, akun yang didaftarkan) ke awal?")) return;
+    Uji.server.reset();
+    pesan("Akun situs dikembalikan ke awal.");
+  });
+</script>
+</body>
+</html>

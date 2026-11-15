@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iframe situs lain · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Checkout dengan bingkai situs lain</h1>
+    <p>Kolom kartu ada di iframe dari raw.githack.com, situs yang berbeda dari halaman ini, seperti gerbang pembayaran pihak ketiga.</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <h3>Ringkasan pesanan</h3>
+        <div class="ringkasan-pesanan"><span>Langganan Uji (1 bulan)</span><span>Rp 49.000</span></div>
+        <div class="ringkasan-pesanan"><strong>Total</strong><strong>Rp 49.000</strong></div>
+        <iframe class="bayar" id="bingkai" title="Bingkai pembayaran" data-testid="bingkai"></iframe>
+        <p class="info">Bingkai dimuat dari <code id="alamat-bingkai"></code>. Bila bingkai kosong lebih dari 10 detik, raw.githack.com sedang bermasalah; coba muat ulang nanti.</p>
+      </div>
+    </div>
+    <div data-panel="iframe-lintas"></div>
+  </div>
+</main>
+<script>
+  const url = KALIS_TESTBED.REPO_RAW + "bayar-frame.html";
+  document.getElementById("bingkai").src = url;
+  document.getElementById("alamat-bingkai").textContent = new URL(url).host;
+</script>
+</body>
+</html>

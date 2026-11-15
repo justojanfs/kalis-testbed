@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Masuk · Kalis Testbed</title>
+  <link rel="stylesheet" href="assets/gaya.css">
+  <script src="assets/skenario.js"></script>
+  <script src="assets/uji.js"></script>
+</head>
+<body>
+<main>
+  <div class="judul-hal">
+    <h1>Masuk</h1>
+    <p>Form login standar dengan atribut autocomplete yang benar.</p>
+  </div>
+  <div class="dua-kolom">
+    <div>
+      <div class="kotak">
+        <form id="form" class="form-uji" novalidate>
+          <label class="kol" for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="username" data-testid="email" data-cek="Email">
+          <label class="kol" for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" data-testid="password" data-cek="Password" data-jenis="password">
+          <p class="galat" id="galat" role="alert"></p>
+          <button type="submit" data-testid="masuk">Masuk</button>
+        </form>
+        <p class="ringkas-data">Akun A: <code>uji@kalis.test</code> / <code>Uji-Kalis-2026!</code><br>Akun B: <code>kedua@kalis.test</code> / <code>Kedua-Kalis-2026!</code></p>
+        <div class="status-wadah" data-status></div>
+      </div>
+    </div>
+    <div data-panel="login-dasar"></div>
+  </div>
+</main>
+<script>
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const pw = document.getElementById("password").value;
+    const galat = document.getElementById("galat");
+    if (Uji.server.masuk(email, pw)) Uji.berhasil("login", email);
+    else galat.textContent = "Email atau password salah.";
+  });
+</script>
+</body>
+</html>
