@@ -16,9 +16,10 @@
     D: { email: "spa@kalis.test", password: "Spa-Kalis-2026!", catatan: "Khusus login SPA" },
     baru: { email: "baru@kalis.test", password: "Baru-Kalis-2026!", catatan: "Untuk form daftar" },
     polos: { email: "polos@kalis.test", password: "Polos-Kalis-2026!", catatan: "Untuk form daftar tanpa atribut" },
+    E: { email: "riwayat@kalis.test", password: "Riwayat-1-2026!", catatan: "Khusus uji riwayat password" },
   };
 
-  const passwordGanti = { A: "Ganti-Kalis-2026!", B: "Ganti-Kedua-2026!" };
+  const passwordGanti = { A: "Ganti-Kalis-2026!", B: "Ganti-Kedua-2026!", E: "Riwayat-2-2026!" };
 
   const kartu = {
     judul: "Kartu Uji",
@@ -30,7 +31,7 @@
     pin: "654321",
   };
 
-  const A = akun.A, B = akun.B, C = akun.C, D = akun.D;
+  const A = akun.A, B = akun.B, C = akun.C, D = akun.D, E = akun.E;
 
   /** Tiap langkah: apa yang dilakukan, dan hasil yang diharapkan menurut desain Kalis. */
   const skenario = [
@@ -46,8 +47,8 @@
         { teks: "Kembali ke halaman login, klik ikon Kalis di toolbar, pilih Akun A.", harapan: "Email dan password terisi. Tabel status kolom menunjukkan keduanya 'terisi'." },
         { teks: "Muat ulang halaman, tekan Ctrl+Shift+L.", harapan: "Popup Kalis terbuka dan menampilkan login untuk situs ini." },
         { teks: `Masuk manual dengan Akun B (${B.email} / ${B.password}), simpan. Kembali, buka popup Kalis.`, harapan: "Popup menampilkan dua login. Memilih Akun B mengisi email Akun B." },
-        { teks: "Isi Akun A dengan password salah (mis. Salah-Sekali-1!), klik Masuk.", harapan: "Situs menolak dengan pesan galat. Catat apakah Kalis tetap menawarkan simpan (perilaku saat ini: ditawarkan) dan apakah itu mengganggu." },
-        { teks: "Jika tawaran untuk password salah muncul, klik Batal.", harapan: "Jendela tertutup, item Akun A di Kalis tidak berubah." },
+        { teks: "Isi Akun A dengan password salah (mis. Salah-Sekali-1!), klik Masuk.", harapan: "Situs menolak dengan pesan galat. Kalis TIDAK menawarkan simpan atau perbarui (sejak v0.4.8 tawaran hanya muncul bila login tampak berhasil)." },
+        { teks: "Bila tawaran tetap muncul, klik Batal. Bila tidak muncul, tandai Lewati.", harapan: "Jendela tertutup, item Akun A di Kalis tidak berubah." },
         { teks: "Kunci Kalis (menu tray atau tombol Kunci), lalu buka popup ekstensi di halaman ini.", harapan: "Popup meminta Master Password. Setelah dibuka, daftar login langsung tampil." },
       ],
     },
@@ -107,8 +108,8 @@
       persiapan: "Akun A sudah tersimpan di Kalis (skenario Login dasar).",
       langkah: [
         { teks: "Buka popup Kalis, pilih Akun A.", harapan: "Hanya 'Password saat ini' terisi. Kolom password baru dan konfirmasi tetap kosong." },
-        { teks: `Isi password baru ${passwordGanti.A} di dua kolom, klik Simpan password.`, harapan: "Situs menyatakan berhasil. Kalis menawarkan PERBARUI password Akun A dan meminta konfirmasi eksplisit." },
-        { teks: "Konfirmasi pembaruan. Buka login.html, isi Akun A lewat Kalis, klik Masuk.", harapan: "Masuk berhasil dengan password baru." },
+        { teks: `Isi password baru ${passwordGanti.A} di dua kolom, klik Simpan password.`, harapan: "Situs menyatakan berhasil. Kalis menawarkan PERBARUI password Akun A (satu klik)." },
+        { teks: "Klik Perbarui. Buka login.html, isi Akun A lewat Kalis, klik Masuk.", harapan: "Masuk berhasil dengan password baru. Di aplikasi, item Akun A punya 'Riwayat penggantian password' berisi password lama (v0.8.0)." },
       ],
     },
     {
@@ -120,6 +121,26 @@
       persiapan: "Akun B sudah tersimpan di Kalis.",
       langkah: [
         { teks: `Isi password saat ini Akun B, password baru ${passwordGanti.B} dua kali, klik Simpan password.`, harapan: "Kalis menawarkan perbarui password untuk Akun B (harapan ideal; catat bila tidak muncul)." },
+      ],
+    },
+    {
+      id: "riwayat-password",
+      kelompok: "Riwayat password",
+      judul: "Riwayat penggantian password (v0.8.0)",
+      halaman: "riwayat.html",
+      tujuan: "Password lama tercatat saat diperbarui dari ekstensi maupun editor, maksimal 5, bisa dilihat, disalin, dikembalikan, dan dihapus.",
+      persiapan: `Kalis v0.8.0 atau lebih baru. Belum ada item ${E.email} di Kalis (hapus dulu bila ada). Klik "Setel ulang Akun E" di halaman ini.`,
+      langkah: [
+        { teks: `Buka login.html, masuk dengan Akun E (${E.email} / ${E.password}), klik Simpan di jendela Kalis. Buka item itu di aplikasi.`, harapan: "Item tersimpan. Belum ada baris 'Riwayat penggantian password' (baris itu hanya muncul bila ada riwayat)." },
+        { teks: `Kembali ke halaman ini. Isi 'Password saat ini' lewat Kalis, ketik ${passwordGanti.E} di dua kolom password baru, klik Simpan password, lalu klik Perbarui di jendela Kalis.`, harapan: `Situs: berhasil. Di aplikasi, password aktif item E = ${passwordGanti.E}, dan muncul 'Riwayat penggantian password (1)' berisi ${E.password} beserta waktu penggantiannya.` },
+        { teks: "Buka riwayat, klik ikon mata pada baris itu, lalu klik Salin dan tempel di Notepad.", harapan: `Password tampil (${E.password}) dan hasil tempel sama persis.` },
+        { teks: "Klik Ubah pada item E. Ganti password berturut-turut menjadi Uji-R-a, Uji-R-b, Uji-R-c, Uji-R-d, Uji-R-e, simpan setiap kali.", harapan: `'Riwayat penggantian password (5)'. Urutan dari atas: Uji-R-d, Uji-R-c, Uji-R-b, Uji-R-a, ${passwordGanti.E}. ${E.password} sudah tidak ada (maksimal 5).` },
+        { teks: "Klik 'Tampilkan semua password'.", harapan: "Kelima password tampil sekaligus; tombol berubah menjadi 'Sembunyikan semua password'." },
+        { teks: "Kunci Kalis, buka lagi, buka item E.", harapan: "Riwayat masih berisi 5 entri (tersimpan di brankas, bukan hanya di layar)." },
+        { teks: `Klik Kembalikan pada baris ${passwordGanti.E}.`, harapan: "Dialog 'Pakai lagi password lama?' muncul, dengan catatan bahwa password di situs tidak ikut berubah." },
+        { teks: "Klik Kembalikan di dialog.", harapan: `Password aktif = ${passwordGanti.E}. Uji-R-e pindah ke urutan teratas riwayat. ${passwordGanti.E} tidak lagi ada di riwayat. Tetap 5 entri.` },
+        { teks: "Buka login.html, isi Akun E lewat Kalis, klik Masuk.", harapan: "Masuk berhasil (password di Kalis kembali sama dengan password di situs), dan tidak ada tawaran simpan/perbarui." },
+        { teks: "Klik 'Hapus riwayat', lalu konfirmasi.", harapan: `Dialog menyebut 5 password lama akan dihapus permanen. Setelahnya baris riwayat hilang; password aktif tetap ${passwordGanti.E}.` },
       ],
     },
     {
@@ -203,17 +224,33 @@
       ],
     },
     {
+      id: "kunci-seketika",
+      kelompok: "Aplikasi",
+      judul: "Kunci seketika: tutup jendela, Win+L, sleep (v0.8.0)",
+      halaman: "kunci.html",
+      tujuan: "Brankas langsung terkunci saat jendela Kalis ditutup ke tray, saat Windows dikunci, dan saat laptop tidur.",
+      persiapan: "Kalis v0.8.0 atau lebih baru. Buka login.html di tab lain untuk mengecek popup ekstensi.",
+      langkah: [
+        { teks: "Buka kunci Kalis, lalu klik ✕ di jendela Kalis.", harapan: "Jendela hilang, tetapi ikon Kalis tetap ada di tray (aplikasi masih berjalan)." },
+        { teks: "Klik ikon Kalis di tray (atau klik kanan → Buka Kalis).", harapan: "Jendela tampil di layar kunci dan meminta Master Password, bukan langsung menampilkan daftar item." },
+        { teks: "Buka kunci, klik ✕ lagi. Di tab login.html, buka popup ekstensi Kalis.", harapan: "Popup meminta Master Password: brankas ikut terkunci, bukan hanya jendelanya yang disembunyikan." },
+        { teks: "Buka kunci Kalis, tekan Win+L, lalu masuk lagi ke Windows.", harapan: "Kalis terkunci: jendela dan popup ekstensi meminta Master Password." },
+        { teks: "Buka kunci Kalis, tidurkan laptop (Start → Power → Sleep), lalu bangunkan.", harapan: "Kalis terkunci setelah laptop bangun." },
+        { teks: "Buka kunci, klik Ubah pada sebuah item, ketik sesuatu tanpa menyimpan, klik ✕, lalu buka lagi dari tray dan buka kuncinya.", harapan: "Kalis terkunci. Perubahan yang belum disimpan hilang: ini keterbatasan yang sudah tercatat. Catat di kolom catatan bila menurutmu mengganggu." },
+      ],
+    },
+    {
       id: "aplikasi",
       kelompok: "Aplikasi",
       judul: "Tray, satu salinan, jeda password salah, kunci otomatis",
       halaman: "aplikasi.html",
       tujuan: "Sisa uji M4 yang ada di sisi aplikasi desktop.",
       langkah: [
-        { teks: "Tutup jendela Kalis dengan tombol X.", harapan: "Kalis tetap berjalan di tray. Popup ekstensi masih bisa mengisi login." },
+        { teks: "Tutup jendela Kalis dengan tombol ✕.", harapan: "Kalis tetap berjalan di tray (ikonnya masih ada). Popup ekstensi tetap bisa dipakai setelah Master Password dimasukkan (sejak v0.8.0 menutup jendela juga mengunci brankas; diuji rinci di skenario Kunci seketika)." },
         { teks: "Klik kanan ikon tray, coba Buka, Kunci, lalu Keluar.", harapan: "Ketiganya berfungsi. Setelah Keluar, popup ekstensi memberi tahu aplikasi belum berjalan." },
         { teks: "Jalankan Kalis, lalu jalankan lagi dari menu Start saat masih berjalan.", harapan: "Tidak muncul salinan kedua; jendela yang ada tampil ke depan." },
         { teks: "Kunci Kalis, ketik Master Password salah 3 kali atau lebih.", harapan: "Setelah percobaan ke-3 ada jeda bertahap (maks. 60 detik) dengan pesan sisa waktu. Berlaku juga lewat popup ekstensi." },
-        { teks: "Buka Kalis, biarkan tanpa aktivitas 5 menit.", harapan: "Vault terkunci otomatis; popup ekstensi meminta Master Password." },
+        { teks: "Buka Kalis, biarkan tanpa aktivitas selama waktu kunci otomatis yang dipilih (Pengaturan → Umum; bawaan 5 menit).", harapan: "Vault terkunci otomatis; popup ekstensi meminta Master Password." },
       ],
     },
   ];

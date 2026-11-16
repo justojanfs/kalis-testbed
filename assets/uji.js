@@ -33,12 +33,21 @@
   // ---------- "Server" tiruan (hanya di browser ini) ----------
   function akunAwal() {
     const out = {};
-    for (const k of ["A", "B", "C", "D"]) out[T.akun[k].email] = T.akun[k].password;
+    for (const k of ["A", "B", "C", "D", "E"]) out[T.akun[k].email] = T.akun[k].password;
     return out;
   }
   const server = {
     daftarAkun() {
-      return baca(KUNCI_AKUN, akunAwal());
+      // Akun bawaan selalu ada; yang tersimpan (password diganti, akun didaftarkan) menimpanya.
+      return { ...akunAwal(), ...baca(KUNCI_AKUN, {}) };
+    },
+    password(email) {
+      return server.daftarAkun()[(email || "").trim().toLowerCase()];
+    },
+    setel(email, password) {
+      const db = baca(KUNCI_AKUN, {});
+      db[email.trim().toLowerCase()] = password;
+      tulis(KUNCI_AKUN, db);
     },
     masuk(email, password) {
       const db = server.daftarAkun();

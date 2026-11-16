@@ -16,11 +16,13 @@ Situs statis murni, tanpa server dan tanpa build: GitHub Pages menyajikan berkas
 | `spa.html` | Login tanpa `<form>`, lewat klik tombol dan tombol Enter |
 | `daftar.html` / `daftar-polos.html` | Form daftar tidak diisi; akun baru ditawarkan disimpan (dengan dan tanpa `autocomplete`) |
 | `ganti-password.html` / `ganti-password-b.html` | Alur perbarui password (username terlihat / tersembunyi) |
+| `riwayat.html` | Riwayat penggantian password (v0.8.0): tercatat dari ekstensi dan editor, maks. 5, lihat/salin, kembalikan, hapus |
 | `jebakan.html` | Kolom tersembunyi lewat CSS (display, visibility, opacity, sr-only, disabled) |
 | `jebakan-luar-layar.html` | Kolom tersembunyi secara geometri (luar layar, clip-path, wadah tinggi 0), dengan sakelar per jebakan |
 | `kartu.html` / `kartu-polos.html` | Isi kartu (autocomplete cc-* + dropdown / nama Indonesia + satu kolom BB/TT), PIN tidak diisi, form bayar tidak dianggap login |
 | `iframe-sama.html` / `iframe-lintas.html` | Kartu di bingkai situs sama (langsung) dan situs lain (izin + konfirmasi) |
 | `situs-lain.html` | Login tidak ditawarkan di domain lain; "Jangan tawarkan" / "Aktifkan lagi" |
+| `kunci.html` | Kunci seketika (v0.8.0): tutup jendela ke tray, Win+L, sleep |
 | `aplikasi.html` | Checklist tray, satu salinan, jeda password salah, kunci otomatis |
 
 Domain kedua untuk uji lintas situs adalah `raw.githack.com`, yang menyajikan berkas repo ini dari domain lain
